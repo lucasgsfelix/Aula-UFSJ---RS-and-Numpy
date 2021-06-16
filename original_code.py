@@ -319,7 +319,7 @@ def measure_ratings_by_nearest_neighbors(data, modeling='items'):
 
         elif modeling == 'users':
 
-            similarities = retrieve_neighbors(historic_rating_matrix, users[token], users)
+            predictions = retrieve_neighbors(historic_rating_matrix, users[token], users)
 
 
     return user_historic
@@ -347,15 +347,35 @@ def read_table(file_input, sep=':', replace_char=None):
 
     data = list(map(lambda row: row.split(sep), data))
 
-    return random.sample(list(filter(lambda row: row[0] != '', data)), 10000)
+    return list(filter(lambda row: row[0] != '', data))
     #return list(filter(lambda row: row[0] != '', data))
 
+
+def mean_squared_error(real, predicted):
+    """
+        Measure the root mean square between the real and predicted values
+        Params:
+            two arrays of lenght n, where the predicted value is given by a algorithm
+            and the real value is retrieved from the historic dataset
+        return a float value
+    """
+
+    if type(predicted) in [float, int] and type(real) in [float, int]:
+
+        return math.sqrt((predicted - real) ** 2)
+
+    if len(predicted) != len(real):
+
+        assert "Predicted and Real arrays most have the same lenght !"
+
+
+    return math.sqrt(sum(list(map(lambda y_pred, y_real: (y_pred - y_real)** 2, predicted, real)))/len(predicted))
 
 if __name__ == '__main__':
 
 
-    input_arguments = {"Historic Data": read_table("Data/ratings.csv", ':', ','),
-                       "Prediction Data": read_table("Data/targets.csv", ':')}
+    input_arguments = {"Historic Data": read_table("Data/train.csv", ';'),
+                       "Prediction Data": read_table("Data/test.csv", ';')}
 
 
     output_file = "predictions.txt"
@@ -364,7 +384,10 @@ if __name__ == '__main__':
 
     with open("Data/time_reports.csv", "a+") as time_report:
 
-        measure_ratings_by_nearest_neighbors(input_arguments, modeling='items')
+        input_arguments['Prediction Data']['Y Predicted'] = measure_ratings_by_nearest_neighbors(input_arguments, modeling='items')
+
+        print("The Final RMSE is: ", mean_squared_error(input_arguments['Prediction Data']['Prediction'],
+                                                        input_arguments['Prediction Data']['Y Predicted']))
 
         time_report.write('\t'.join([time.time() - start]) + '\n')
 

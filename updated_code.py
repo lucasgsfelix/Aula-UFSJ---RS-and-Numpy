@@ -14,6 +14,9 @@ import pandas as pd
 from operator import itemgetter
 
 
+from sklearn.metrics import mean_squared_error
+
+
 def measure_cosine_similarity(tokens_one, tokens_two):
     """
         Calculating the cosine similarity between two arrays
@@ -192,7 +195,7 @@ def read_table(file_input, sep=':'):
         return a list of lists
     """
 
-    return pd.read_table(file_input, sep=sep, engine='python').sample(50000)
+    return pd.read_table(file_input, sep=sep, engine='python')
 
 
 
@@ -244,8 +247,8 @@ def index_data(data):
 if __name__ == '__main__':
 
 
-    input_arguments = {"Historic Data": read_table("Data/ratings.csv", '[,:]'),
-                       "Prediction Data": read_table("Data/targets.csv", ':')}
+    input_arguments = {"Historic Data": read_table("Data/train.csv", ';'),
+                       "Prediction Data": read_table("Data/test.csv", ';')}
 
 
     input_arguments, index_info = index_data(input_arguments)
@@ -256,7 +259,10 @@ if __name__ == '__main__':
 
     with open("Data/time_reports.csv", "a+") as time_report:
 
-        measure_ratings_by_nearest_neighbors(input_arguments, index_info, modeling='items')
+        input_arguments['Prediction Data']['Y Predicted'] = measure_ratings_by_nearest_neighbors(input_arguments, index_info, modeling='items')
+
+        print("The Final RMSE is: ", mean_squared_error(input_arguments['Prediction Data']['Prediction'],
+                                                        input_arguments['Prediction Data']['Y Predicted'], squared=False))
 
         time_report.write('\t'.join([str(time.time() - start)]) + '\n')
 
