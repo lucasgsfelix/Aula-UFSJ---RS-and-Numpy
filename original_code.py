@@ -347,7 +347,7 @@ def read_table(file_input, sep=':', replace_char=None):
 
     data = list(map(lambda row: row.split(sep), data))
 
-    return list(filter(lambda row: row[0] != '', data))
+    return random.sample(list(filter(lambda row: row[0] != '', data)), 30000)
     #return list(filter(lambda row: row[0] != '', data))
 
 

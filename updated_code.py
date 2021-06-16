@@ -156,8 +156,8 @@ def measure_ratings_by_nearest_neighbors(data, index_info, modeling='items'):
     means = {}
 
     # making a dict of token: rating - user mean and item mean
-    means['user'] = data['Historic Data'].groupby("UserId").mean('Prediction').to_dict()['ItemId']
-    means['item'] = data['Historic Data'].groupby("ItemId").mean('Prediction').to_dict()['UserId']
+    means['user'] = data['Historic Data'].groupby("UserId").mean('Prediction')['Prediction'].to_dict()
+    means['item'] = data['Historic Data'].groupby("ItemId").mean('Prediction')['Prediction'].to_dict()
 
     similarities = measure_items_similarity(data, historic_rating_matrix, index_info)
 
