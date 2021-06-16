@@ -118,8 +118,6 @@ def get_rating_based_on_closest_items(similarities, user_historic, user, mean, a
 
         return mean
 
-    print(similarity_rating/similarity_sum)
-
     return similarity_rating/similarity_sum
 
 
@@ -347,7 +345,7 @@ def read_table(file_input, sep=':', replace_char=None):
 
     data = list(map(lambda row: row.split(sep), data))
 
-    return random.sample(list(filter(lambda row: row[0] != '', data)), 30000)
+    return random.sample(list(filter(lambda row: row[0] != '', data)), 10000)
     #return list(filter(lambda row: row[0] != '', data))
 
 
